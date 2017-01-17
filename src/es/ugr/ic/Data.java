@@ -18,9 +18,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Data.
+ * The Class Data to handle the data files for the algorithm.
  */
 public class Data {
 	
@@ -155,7 +154,7 @@ public class Data {
 		System.out.println("\nDistance matrix: ");
 		for (int i = 0; i < distances.length; i++) {
 			for (int j = 0; j < distances[i].length; j++) {
-				System.out.printf("%6d",distances[i][j]);
+				System.out.printf("%7d",distances[i][j]);
 			}
 			System.out.println();
 		}
@@ -163,7 +162,7 @@ public class Data {
 		System.out.println("\nMaterial flow matrix: ");
 		for (int i = 0; i < matFlow.length; i++) {
 			for (int j = 0; j < matFlow[i].length; j++) {
-				System.out.printf("%6d",matFlow[i][j]);
+				System.out.printf("%7d",matFlow[i][j]);
 			}
 			System.out.println();
 		}

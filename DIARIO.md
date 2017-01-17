@@ -62,3 +62,32 @@ Adaptación    <=>	Calidad de la solución
 He creado un proyecto en eclipse con una clase `Data` que contiene la funcionalidad necesaria para cargar los distintos ficheros de datos que se encuentran en la carpeta `qap.data`.
 
 Para comenzar con la implementación se puede ver [http://www.theprojectspot.com/tutorial-post/creating-a-genetic-algorithm-for-beginners/3](http://www.theprojectspot.com/tutorial-post/creating-a-genetic-algorithm-for-beginners/3) que parece un tutorial básico e interesante para crear una versión inicial del algoritmo.
+
+#### Campos a rellenar del formulario de entrega de resultados
+- Algoritmo empleado (estandar, variante baldwiniana, variante lamarckiana...)
+- Tamaño población
+- Número generaciones
+- Mecanismo de selección (de padres)
+  - Selección proporcional - Ruleta
+  - Selección proporcional - SUS [Stochastic Universal Sampling]
+  - Selección proporcional con "windowing"
+  - Selección proporcional con "sigma scaling"
+  - Ranking lineal
+  - Ranking exponencial
+  - Selección por torneo
+  - otro
+- Mecanismo de remplazo (selección de supervivientes)
+  - Modelo generacional (Standard GA)
+  - Modelo estacionario (Steady-state GA)
+  - Modelo elitista
+  - otro
+- Operador de cruce
+- Operador de mutación
+- Optimización local
+- Coste de la solución => en que unidades??
+- Solución encontrada
+
+Me pondré a leer la presentación G2 de los apuntes de la asignatura para entender que significa cada una de estas cosas y esta tarde en clase empezaré más con la implementación.
+
+#### Preguntas iniciales
+- **¿Cuál sería el genotipo de este problema, que representaría?** Me imagino que será un vector de enteros pero no se que representaría.
