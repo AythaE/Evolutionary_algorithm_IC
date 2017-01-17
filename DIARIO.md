@@ -27,13 +27,21 @@ Nos acaban de explicar la práctica, aqúi recojo los comentarios que he apuntad
 
 
 - Operador de cruce: distintos tipos
+
+
 - Mecanismo de seleción de individuos a reproducir
-- Una permutacion es valida si no se repiten los números (es un vector de ints)
+
+
+- Una permutación es valida si no se repiten los números (es un vector de ints)
+
+
 - Función de coste dependiente 2 matrices, distancias y flujos
+
+
 - Echarle un vistazo a las [diapositivas de la asignatura sobre computación evolutiva (G1 y G2)](http://elvex.ugr.es/decsai/computational-intelligence/):
 
 ```
-Evolucion	 <=>	Resolucion de problemas
+Evolución	 <=>	Resolución de problemas
 Entorno       <=>	 Problema
 Individuo 	<=>	Solución candidata
 Adaptación    <=>	Calidad de la solución
@@ -49,3 +57,8 @@ Adaptación    <=>	Calidad de la solución
 #### Pseudocódigo de un algoritmo genético clásico
 
 ![imagen pseudocódigo](Imgs/Pseudocodigo básico Alg Gene.png "imagen pseudocódigo")
+
+## 17/01/2017
+He creado un proyecto en eclipse con una clase `Data` que contiene la funcionalidad necesaria para cargar los distintos ficheros de datos que se encuentran en la carpeta `qap.data`.
+
+Para comenzar con la implementación se puede ver [http://www.theprojectspot.com/tutorial-post/creating-a-genetic-algorithm-for-beginners/3](http://www.theprojectspot.com/tutorial-post/creating-a-genetic-algorithm-for-beginners/3) que parece un tutorial básico e interesante para crear una versión inicial del algoritmo.
