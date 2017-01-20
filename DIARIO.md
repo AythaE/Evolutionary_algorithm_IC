@@ -90,4 +90,25 @@ Para comenzar con la implementación se puede ver [http://www.theprojectspot.com
 Me pondré a leer la presentación G2 de los apuntes de la asignatura para entender que significa cada una de estas cosas y esta tarde en clase empezaré más con la implementación.
 
 #### Preguntas iniciales
-- **¿Cuál sería el genotipo de este problema, que representaría?** Me imagino que será un vector de enteros pero no se que representaría.
+- [x] **¿Cuál sería el genotipo de este problema, que representaría?** El genotipo es el orden en el que se multiplican las columnas de una de las matrices (la de distancia por ejemplo)
+- [x] **¿Cuál será la función de fitness?** El valor de la función de optimización en negativo.
+- [x] **¿Qué es la permutación p() sobre el conjunto de instalaciones?** Es un vector de enteros del tamaño del problema concreto en los que no se puede repetir ningún elemento.  
+- [ ] **¿Cual será el operador de cruce?**
+- [ ] **¿Cuál será el mecanismo de selección?**
+- [ ] **¿Cuál será el operador de mutación?**
+
+#### Comentarios de clase
+Hay que minimzar la sumatoria de A[i][j] * B [P(i)][P(j)]
+
+Para el operador de cruce hay que elegir por donde cortar, una vez elegido eso se combina pero probando que al introducir un número no esté ya, si ya está se seleccionaría el siguiente. Ej.
+```
+12|34 => 12|43
+31|24 => 31|42
+```
+
+## 19/01/2017
+
+Leyendo el libro de [*Genetic Algorithms in Java Basics*](http://www.apress.com/9781484203293)  by Lee Jacobson and Burak Kanber (Apress, 2015), en él resuelven el problema del viajante, que tiene características similares al QAP, por ello he decidido leer como lo solucionan para aplicar medidas similares.
+
+- He visto que seria interesante como operador de cruce el crossover ordenado.
+- Como condición de terminación usare un número máximo de generaciones sin mejorar el fitness medio de la población. Habrá que mirar como funciona porque igual es mejor hacerlo sobre el fitness del mejor individuo ya que el fitness medio se puede incrementar lentamente y no terminar casi nunca aunque se atasque.
