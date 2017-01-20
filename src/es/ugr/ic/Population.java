@@ -14,7 +14,6 @@
  */
 package es.ugr.ic;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Population.
  */
@@ -44,7 +43,7 @@ public class Population {
 			return;
 		}
 		for (int i = 0; i < individuals.length; i++) {
-			individuals[i] = new Individual(chromosomeSize);
+			individuals[i] = new Individual(chromosomeSize, true);
 		}
 		
 		populationSize = numIndiv;

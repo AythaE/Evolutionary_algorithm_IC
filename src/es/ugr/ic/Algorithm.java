@@ -14,6 +14,8 @@
  */
 package es.ugr.ic;
 
+import java.util.Random;
+
 /**
  * The Class Algorithm that contains the methods of the genetic algorithm.
  */
@@ -69,6 +71,81 @@ public class Algorithm {
 			else
 				return true;
 		}
+	}
+	
+	
+	
+	/**
+	 * Crossover operator, implements ordered crossover operator.
+	 *
+	 * @param i1 the individual 1, one of the parents
+	 * @param i2 the individual 2, one of the parents
+	 * @return the new individual
+	 */
+	public static Individual crossover(Individual i1, Individual i2){
+		
+		Random rand = new Random();
+		int chromosomeSize = i1.getChromosomeSize();
+		Individual newIndiv = new Individual(chromosomeSize, false);
+		int num1 = -1, num2 = -1;
+		int genesP1 = 0, genesP2 = 0;
+		
+		//Generate random numbers while numbers are equal, because then the child 
+		//wouldn't has genes form parent 1, or the difference between them are
+		//the chromosome size, because then the child wouldn't has genes from 
+		//parent 2
+		while (num1 == num2 || (genesP1 = Math.abs(num1-num2)) >= (chromosomeSize-1) ){
+			num1 = rand.nextInt(chromosomeSize); 
+			num2 = rand.nextInt(chromosomeSize);
+		}
+		
+		//Add 1 to genesP1 because the array starts at 0 and the genesP1 is
+		//the number of genes of the parent 1 - 1
+		genesP1++;
+		
+		//Select the min number
+		int pos1 = Math.min(num1, num2);
+		
+		//Select the max number
+		int pos2 = Math.max(num1, num2);
+		
+		//Copy a fragment of the parent 1
+		for (int i = pos1; i <= pos2; i++) {
+			newIndiv.setGene(i1.getGene(i), i);
+		}
+		
+		
+		int p2Ind=  pos2+1;
+		
+		//Fill the rest of the new individual with the parent 2 from the beginning
+		while((genesP1 + genesP2)< chromosomeSize){
+			
+			//In case the index is >= than the max value then restart it
+			if (p2Ind >= chromosomeSize) {
+				p2Ind -= chromosomeSize;
+			}
+			
+			//If the child not contains the allele of the p2 then insert it
+			if (newIndiv.containsAllele(chromosomeSize-1, i2.getGene(p2Ind)) == false) {
+				//if the actual gene of the child is empty then insert it
+				//FIXME Unnecessary iterations, think a way to use pos1 and pos2 to avoid the parent 1 part
+				for (int chldInd = 0; chldInd < chromosomeSize; chldInd++) {
+					if (newIndiv.getGene(chldInd) == -1) {
+						newIndiv.setGene(i2.getGene(p2Ind), chldInd);
+						genesP2++;
+						break;
+					}
+				}
+				
+				
+			}
+			p2Ind++;
+
+			
+		}
+		
+		return newIndiv;
+		
 	}
 
 }

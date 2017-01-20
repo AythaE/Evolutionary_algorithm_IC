@@ -35,7 +35,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		try {
-			Data.readData(DataFile.tai256c);
+			Data.readData(DataFile.nug12);
 		} catch (FileNotFoundException e) {
 			System.err.println("Error reading file "+ Data.getDataFile().getAbsolutePath());
 			e.printStackTrace();
@@ -57,12 +57,27 @@ public class Main {
 			
 		System.out.println("\nPop fitness: "+population.getPopulationFitness());
 		
+		Individual parent1 = population.getFittest();
+		Individual parent2 = null;
+		
 		System.out.println("\nIndivduals: ");
 		for (int i = 0; i < population.getIndividuals().length; i++) {
 			System.out.println(population.getIndividuals()[i]);
+			
+			if (parent1.equals(population.getIndividuals()[i])==false) {
+				parent2 = population.getIndividuals()[i];
+			}
 		}
 		
 		System.out.println("\nFittest indiv: "+population.getFittest());
+		
+		Individual child = Algorithm.crossover(parent1, parent2);
+		child.calcFitness();
+		
+		System.out.println("\nCrossover:\n-Parent 1: "+parent1+
+				"\n-Parent 2: "+parent2+"\n-Child: "+child);
+		
+		
 	}
 
 }
