@@ -14,6 +14,10 @@
  */
 package es.ugr.ic;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
+// TODO: Auto-generated Javadoc
 /**
  * The Class Population.
  */
@@ -28,13 +32,15 @@ public class Population {
 	/** The population size. */
 	private int populationSize = 0;
 	
+	public Population (int numIndiv){
+		individuals = new Individual [numIndiv];
+		populationSize = numIndiv;
+	}
+	
 	/**
 	 * Generate a random population.
-	 *
-	 * @param numIndiv the number of individuals
 	 */
-	public void generatePopulation (int numIndiv){
-		individuals = new Individual [numIndiv];
+	public void generateRandomPopulation (){
 		
 		int chromosomeSize = Data.getSize();
 		if (chromosomeSize <= 0) {
@@ -46,7 +52,23 @@ public class Population {
 			individuals[i] = new Individual(chromosomeSize, true);
 		}
 		
-		populationSize = numIndiv;
+	}
+
+	/**
+	 * Generate empty population.
+	 */
+	public void generateEmptyPopulation (){
+		
+		int chromosomeSize = Data.getSize();
+		if (chromosomeSize <= 0) {
+			System.err.println("Error initializating population, gene size couldn't be less or equal than 0");
+			System.err.println("Aborting population's generation...");
+			return;
+		}
+		for (int i = 0; i < individuals.length; i++) {
+			individuals[i] = new Individual(chromosomeSize, false);
+		}
+		
 	}
 
 	/**
@@ -82,19 +104,34 @@ public class Population {
 	}
 	
 	/**
-	 * Gets the fittest individual.
+	 * Gets the fittest individuals.
+	 * @param numIndiv TODO
 	 *
-	 * @return the fittest
+	 * @return the fittest individuals
 	 */
-	public Individual getFittest(){
-		int fittestIndex = 0;
+	public Individual[] getFittest(int numIndiv){
 		
-		for (int i = 1; i < individuals.length; i++) {
-			if (individuals[fittestIndex].getFitness() < individuals[i].getFitness()) {
-				fittestIndex = i;
+		Individual [] copyOfIndiv = Arrays.copyOf(individuals, populationSize);
+		
+		
+		//Sort a copy of the individual array to select the best numIndiv 
+		//individuals 
+		Arrays.sort(copyOfIndiv, new Comparator<Individual>() {
+
+			@Override
+			public int compare(Individual o1, Individual o2) {
+				if (o1.getFitness() > o2.getFitness()) {
+					return -1;
+				} else if (o1.getFitness() < o2.getFitness()) {
+					return 1;
+				}
+				return 0;
 			}
-		}
-		return individuals[fittestIndex];
+		});
+		
+		
+		
+		return Arrays.copyOf(copyOfIndiv, numIndiv);
 	}
 
 	/**

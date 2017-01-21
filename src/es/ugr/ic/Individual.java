@@ -17,6 +17,7 @@ package es.ugr.ic;
 import java.util.Arrays;
 import java.util.Random;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Individual that match to a permutation.
  */
@@ -65,6 +66,17 @@ public class Individual {
 		}
 		
 		this.chromosomeSize = chromosomeSize;
+	}
+
+	/**
+	 * Instantiates a new individual from other.
+	 *
+	 * @param individual the original individual to copy
+	 */
+	public Individual(Individual individual) {
+		this.chromosomeSize = individual.getChromosomeSize();
+		this.fitness = individual.getFitness();
+		this.genes = individual.getGenes();
 	}
 
 	/**
@@ -166,5 +178,27 @@ public class Individual {
 	@Override
 	public String toString() {
 		return "Fitness: "+this.fitness+" "+Arrays.toString(genes);
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Individual other = (Individual) obj;
+		if (chromosomeSize != other.chromosomeSize)
+			return false;
+		if (fitness != other.fitness)
+			return false;
+		if (!Arrays.equals(genes, other.genes))
+			return false;
+		return true;
 	}
 }

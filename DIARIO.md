@@ -84,7 +84,7 @@ Para comenzar con la implementación se puede ver [http://www.theprojectspot.com
 - Operador de cruce
 - Operador de mutación
 - Optimización local
-- Coste de la solución => en que unidades??
+- Coste de la solución => Valor de función fitness
 - Solución encontrada
 
 Me pondré a leer la presentación G2 de los apuntes de la asignatura para entender que significa cada una de estas cosas y esta tarde en clase empezaré más con la implementación.
@@ -93,7 +93,7 @@ Me pondré a leer la presentación G2 de los apuntes de la asignatura para enten
 - [x] **¿Cuál sería el genotipo de este problema, que representaría?** El genotipo es el orden en el que se multiplican las columnas de una de las matrices (la de distancia por ejemplo)
 - [x] **¿Cuál será la función de fitness?** El valor de la función de optimización en negativo.
 - [x] **¿Qué es la permutación p() sobre el conjunto de instalaciones?** Es un vector de enteros del tamaño del problema concreto en los que no se puede repetir ningún elemento.  
-- [ ] **¿Cual será el operador de cruce?**
+- [x] **¿Cual será el operador de cruce?** Cruce ordenado
 - [ ] **¿Cuál será el mecanismo de selección?**
 - [ ] **¿Cuál será el operador de mutación?**
 
@@ -112,3 +112,19 @@ Leyendo el libro de [*Genetic Algorithms in Java Basics*](http://www.apress.com/
 
 - He visto que seria interesante como operador de cruce el crossover ordenado.
 - Como condición de terminación usare un número máximo de generaciones sin mejorar el fitness medio de la población. Habrá que mirar como funciona porque igual es mejor hacerlo sobre el fitness del mejor individuo ya que el fitness medio se puede incrementar lentamente y no terminar casi nunca aunque se atasque.
+
+## 20/01/2017
+He implementado el operador de cruce comentado arriba, pero la versión del crossover ordenado empleado en el mencionado libro  parece peculiar, respeta el orden pero para rellenar con el otro padre tras transmitir el fragmento del primer padre continúa desde la posición de corte hasta el final del segundo padre, en lugar de recorrer el segundo padre linealmente, sería **interesante probar la diferencia**. me falta seleccionar un operador de mutación y un mecanismo de selección.
+
+Viendo los apuntes de la asignatura sobre la selección dice que está demostrado que no se puede alcanzar solución óptima sin usar selección elitista, es decir, que los n mejores miembros de una población pasen a la siguiente directamente. En muchos casos el valor de esa n es 1 pero sería interesante que fuera 2 para intentar evitar atascarse en 1 mínimo local cuando la población tenga poca variabilidad, en caso de seleccionar los 2 mejores individuos estos, con algo de suerte, pueden pertenece a 2 máximos locales distintos con lo que hay mas posibilidad de escapar cuando se combinen.
+
+Respecto al mecanismo de selección concreto a utilizar según los apuntes, estos se dividen en 3 grandes grupos:
+- Mecanismos de selección proporcional (ruleta, SUS,...): Asigna probabilidades de selección en función del valor fitness de cada individuo y selecciona aleatoriamente individuos con esas probabilidades.
+- Mecanismos basados en Ranking: Intentan eliminar los problemas de los previos asignando probabilidades teniendo en cuenta los valores relativos de fitness. Conllevan cálculos más complejos.
+- Selección por torneo: selecciona aleatoriamente k miembros de la población y escoge el mejor repitiendo esto las veces necesarias.
+
+De estos métodos los que más he visto han sido la selección proporcional por ruleta y el mecanismo de torneo, teniendo en cuenta el gran número de operaciones a llevar a cabo descartaría los mecanismos de ranking porque seguramente ralentizarían todo el proceso. Teniendo en cuenta comentarios de clase el verdadero poder de los algoritmos genéticos es la aleatoriedad, por ello confiare totalmente en ella implementando una selección por torneo. El tamaño típico de torneo es de 5 individuos así que provaré con ese.
+
+Como mecanismo de mutación teniendo en cuenta las características concretas del problema he seleccionado la mutacion por intercambio (swap), aleatoriamente se selecciona un gen con una probabilidad de **0.02%**
+
+Estoy pensando en paralelizar el algoritmo aprovechando multiples hilos. Así de primeras se me ocurre que se podría dividir la población a cruzar tras guardar a los elite y que cada hilo se encargara de una parte de la población, habría que estudiarlo que no diera problemas, igual es necesario convertir la clase Algorithm en no estática para que cada hilo tenga su copia.
