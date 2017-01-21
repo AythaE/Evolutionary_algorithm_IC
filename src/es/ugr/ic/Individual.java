@@ -17,11 +17,13 @@ package es.ugr.ic;
 import java.util.Arrays;
 import java.util.Random;
 
+import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BEncoderStream;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class Individual that match to a permutation.
  */
-public class Individual {
+public class Individual implements Comparable<Individual>{
 	
 	/** The genes. */
 	private int[] genes = null;
@@ -38,8 +40,9 @@ public class Individual {
 	 * @param chromosomeSize the gene length
 	 * @param initIndiv flag to indicate if the new individual must be 
 	 * initialized randomly
+	 * @param applyGreedy TODO
 	 */
-	public Individual(int chromosomeSize, boolean initIndiv)
+	public Individual(int chromosomeSize, boolean initIndiv, boolean applyGreedy)
 	{
 		this.genes = new int[chromosomeSize];
 		Arrays.fill(this.genes, -1);
@@ -63,6 +66,14 @@ public class Individual {
 				}
 			}
 			
+			if (applyGreedy) {
+				Individual optimized = greedyHeuristic();
+				
+				this.chromosomeSize = optimized.getChromosomeSize();
+				this.fitness = optimized.getFitness();
+				this.genes = optimized.getGenes();
+			}
+			
 		}
 		
 		this.chromosomeSize = chromosomeSize;
@@ -76,7 +87,7 @@ public class Individual {
 	public Individual(Individual individual) {
 		this.chromosomeSize = individual.getChromosomeSize();
 		this.fitness = individual.getFitness();
-		this.genes = individual.getGenes();
+		this.genes = Arrays.copyOf(individual.getGenes(), individual.getGenes().length);
 	}
 
 	/**
@@ -96,6 +107,36 @@ public class Individual {
 		return false;
 	}
 	
+	/**
+	 * Greedy heuristic.
+	 *
+	 * @return the individual
+	 */
+	public Individual greedyHeuristic(){
+		Individual best;
+		Individual S = new Individual(this);
+		
+		do {
+			best = S;
+			for (int i = 0; i < genes.length; i++) {
+				for (int j = i+1; j < genes.length; j++) {
+					Individual T = new Individual(S);
+					
+					int tempGene = T.getGene(i);
+					T.setGene(T.getGene(j), i);
+					T.setGene(tempGene, j);
+					
+					T.calcFitness();
+					
+					if (T.getFitness() < S.getFitness()) {
+						S = new Individual(T);
+					}
+				}
+			}
+		} while (best.getFitness() > S.getFitness());
+		
+		return S;
+	}
 	/**
 	 * Gets the genes.
 	 *
@@ -149,7 +190,7 @@ public class Individual {
 				tempFitness += matFlow[i][j] * distance[genes[i]][genes[j]];
 			}
 		}
-		fitness = -tempFitness;
+		fitness = tempFitness;
 		
 		return fitness;
 	}
@@ -160,6 +201,9 @@ public class Individual {
 	 * @return the fitness
 	 */
 	public long getFitness() {
+		if (fitness == 0) {
+			calcFitness();
+		}
 		return fitness;
 	}
 	
@@ -201,4 +245,45 @@ public class Individual {
 			return false;
 		return true;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(Individual o) {
+		if (this == o)
+			return 0;
+		if (o == null)
+			return -1;
+		if (getClass() != o.getClass())
+			return -1;
+		Individual other = (Individual) o;
+		if (chromosomeSize != other.chromosomeSize)
+			return -1;
+		//If fitness is diferent then the individual with less fitness is the 
+		//less indiv
+		if (fitness != other.fitness)
+			if (fitness < other.fitness) {
+				return -1;
+			}
+			else {
+				return 1;
+			}
+		//If fitness is equal then check if genes are equal
+		else{
+			if (Arrays.equals(genes, other.genes))
+				return 0;
+			//If genes are different return randomly 1 or -1 because there 
+			//isn't a way to determine which one is less than the other
+			else{
+				if(Math.random() > 0.5)
+					return 1;
+				else 
+					return -1;
+			}
+		}
+		
+	}
+	
+	
 }

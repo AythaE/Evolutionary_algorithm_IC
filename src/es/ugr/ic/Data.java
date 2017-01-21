@@ -47,6 +47,9 @@ public class Data {
 	/** The data file. */
 	private static File dataFile = null;
 	
+	/**	The data file name */
+	private static DataFile dataFileName= null;
+	
 	/** The size. */
 	private static int size = 0;
 	
@@ -99,10 +102,10 @@ public class Data {
 				}
 			}
 
-
+			
 			sc.close();
 		
-		
+			dataFileName = fName;
 	}
 
 
@@ -144,11 +147,21 @@ public class Data {
 		return dataFile;
 	}
 
+	/**
+	 * Gets the data file name
+	 * @return the data file name from the DataFile enum
+	 */
+	public static DataFile getDataFileName() {
+		return dataFileName;
+	}
+
 
 	/**
 	 * Prints the loaded file.
 	 */
 	public static void printLoadedFile(){
+		
+		System.out.println("Loaded file: "+dataFileName+".dat");
 		System.out.println("Problem size: "+ size);
 		
 		System.out.println("\nDistance matrix: ");
