@@ -145,4 +145,12 @@ Cuando logre optimizar ese proceso tendré que crear una ejecución del algoritm
 ## 22/01/2017
 He implementado un método para calcular el fitness de un individuo tras intercambiarle 2 genes usando el fitness y los genes previos al cambio, con lo que se reduce enormemente el tiempo procesamiento al no tener que calcular el fitness entero desde 0. Con ello consigo tiempos del orden de 20 segundos para la generación de una población de 100 individuos con optimización greedy.
 
-Para adaptar esa optimización me ha tocado remodelar un poco el código, en lugar de generar población greedy directamente lo genero aleatoriamente y a la hora de evaluar la población en función de la variante del algoritmo calculo el fitness del modo indicado, aplicando optimización greedy en el caso de variante balwiniana (guardando solo el fitness óptimo) o la variante lamarkiana (sustituyendo al individuo por la version )
+Para adaptar esa optimización me ha tocado remodelar un poco el código, en lugar de generar población greedy directamente lo genero aleatoriamente y a la hora de evaluar la población en función de la variante del algoritmo calculo el fitness del modo indicado, aplicando optimización greedy en el caso de variante balwiniana (guardando solo el fitness óptimo) o la variante lamarkiana (sustituyendo al individuo por la versión optimizada).
+
+Ahora solo falta retocar parámetros para obtener la mejor solución posible. He obtenido la mejor solución hasta ahora con 10 individuos y un algoritmo lamarckiano, esta solución tiene un valor de 44818142.
+
+#### Parámetros a retocar
+- Tamaño de la población
+- Probabilidad de mutación de cada gen
+- Tamaño del torneo
+- Individuos élite
