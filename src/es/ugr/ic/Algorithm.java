@@ -18,20 +18,22 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Algorithm that contains the methods of the genetic algorithm.
  */
 public class Algorithm {
 
-	/** The Constant MAX_GENERATION_WO_IMPROVEMENT. */
-	private static final int MAX_GENERATION_WO_IMPROVEMENT = 200;
+	/** The Constant MAX_GENERATION_WO_IMPROVEMENT_STANDARD. */
+	private static final int MAX_GENERATION_WO_IMPROVEMENT_STANDARD = 200;
+	
+	/** The Constant MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED. */
+	private static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 100;
 
 	/** The Constant TOURNAMENT_SIZE. */
 	public static final int TOURNAMENT_SIZE = 5;
 
-	/** The Constant MUTATION_PROB. */
-	public static final double MUTATION_PROB = 0.002;
+	/** The Constant GENE_MUTATION_PROB. */
+	public static final double GENE_MUTATION_PROB = 0.0025;
 
 	/** The Constant ELITISM_INDIVIDUALS. */
 	public static final int ELITISM_INDIVIDUALS = 2;
@@ -72,14 +74,16 @@ public class Algorithm {
 		int popSize = pop.getPopulationSize();
 		Population newPop = new Population(popSize);
 
+		//Save the best inividuals to the next population directly
 		Individual[] elite = pop.getFittest(ELITISM_INDIVIDUALS);
-
 		for (int i = 0; i < elite.length; i++) {
 			newPop.saveIndividual(elite[i], i);
 		}
 
 		long mutationCount = 0;
 
+		//For the rest of the individuals make a selection of 2 parents,
+		//crossover it, mutate it and save it the new population
 		for (int i = ELITISM_INDIVIDUALS; i < popSize; i += 2) {
 			Individual parent1 = selection(pop);
 			Individual parent2;
@@ -97,50 +101,96 @@ public class Algorithm {
 
 		}
 
+		//Calculation of the effective mutation rate dividing the total mutated
+		//genes by the total genes and multiply it by 100 to get a percent
 		mutationRate = ((double) mutationCount / (popSize * elite[0].getChromosomeSize())) * 100;
 
 		return newPop;
 
 	}
 
-	/**
-	 * TODO.
-	 *
-	 * @param pop the pop
-	 * @return the population
-	 */
-	public static Population evolvePopulationMultiThread(Population pop) {
-
-		return null;
-
-	}
+	
 
 	/**
 	 * Evaluate population.
 	 *
-	 * @param pop
-	 *            the pop
+	 * @param pop the pop
 	 */
 	public static void evaluatePopulation(Population pop) {
 		Individual[] popIndiv = pop.getIndividuals();
+		
+		int popSize = pop.getPopulationSize();
+	
 		long popFitness = 0;
+		
+		//Calculate the number of processors to parallelize
+		int processors = Runtime.getRuntime().availableProcessors();
+		int numThreads;
+		
+		if (processors >= 2) {
+			if (processors >= 4)
+				numThreads = 4;
+			else
+				numThreads = 2;
+			
+			// Calculate the part of the population for divide it between threads
+			int partIndiv = popSize / numThreads;
 
-		for (Individual indiv : popIndiv) {
-			popFitness += indiv.calcFitness();
+		
+			// If populationSize is no an divisible by numThreads then calc the rest
+			int rest =popSize % numThreads;
+
+			//Instantiate the Runnable classes
+			GreedyOptimizationThread[] thBodys = new GreedyOptimizationThread[numThreads];
+			for (int i = 0; i < thBodys.length; i++) {
+				//Add the rest of the division to the last one
+				if (i == numThreads - 1) 
+					thBodys[i] = new GreedyOptimizationThread(partIndiv * i, partIndiv * (i+1) + rest, algType, popIndiv);
+				else
+					thBodys[i] = new GreedyOptimizationThread(partIndiv * i, partIndiv * (i+1), algType, popIndiv);
+			}
+			
+			//Instantiate and start the threads from back to top
+			Thread[] th = new Thread[numThreads];
+			for (int i = numThreads - 1; i >= 0; i--) {
+				th[i] =  new Thread(thBodys[i]);
+				th[i].start();
+				
+			}
+			
+			//Wait for the threads to finish their tasks
+			for (int i = 0; i < th.length; i++) {
+				try {
+					th[i].join();
+					popFitness += thBodys[i].getSumFitness();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		
+		} 
+		//If number of processors is less than 2 then execute it on a single thread
+		else{
+			for (Individual indiv : popIndiv) {
+				popFitness += indiv.calcFitness(algType);
+			}
+
 		}
-
+		
+		
 		popFitness /= pop.getPopulationSize();
 
 		pop.setPopulationFitness(popFitness);
 
 	}
 
+
 	/**
 	 * Check if Algorithm has finished. The termination condition of this
 	 * algorithm is a max number of generations without improvement.
 	 *
-	 * @param pop
-	 *            the pop
+	 * @param pop the pop
 	 * @return true, if is finished
 	 */
 	public static boolean isFinished(Population pop) {
@@ -150,11 +200,20 @@ public class Algorithm {
 			return false;
 		} else {
 			generationsWOImprovement++;
-
-			if (generationsWOImprovement < MAX_GENERATION_WO_IMPROVEMENT)
-				return false;
-			else
-				return true;
+			
+			if (algType == AlgorithmType.STANDARD) {
+				if (generationsWOImprovement < MAX_GENERATION_WO_IMPROVEMENT_STANDARD)
+					return false;
+				else
+					return true;
+			}
+			else {
+				if (generationsWOImprovement < MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED)
+					return false;
+				else
+					return true;
+			}
+			
 		}
 	}
 
@@ -165,15 +224,15 @@ public class Algorithm {
 	 *            the individual 1, one of the parents
 	 * @param i2
 	 *            the individual 2, one of the parents
-	 * @return the new individual TODO
+	 * @return the 2 childs
 	 */
 	public static Individual[] crossover(Individual i1, Individual i2) {
 
 		Random rand = new Random();
 		int chromosomeSize = i1.getChromosomeSize();
 		Individual[] newIndiv = new Individual[2];
-		newIndiv[0] = new Individual(chromosomeSize, false, false);
-		newIndiv[1] = new Individual(chromosomeSize, false, false);
+		newIndiv[0] = new Individual(chromosomeSize, false);
+		newIndiv[1] = new Individual(chromosomeSize, false);
 
 		int num1 = -1, num2 = -1;
 		int genesP1 = 0, genesP2 = 0;
@@ -225,8 +284,6 @@ public class Algorithm {
 			// If the child 0 not contains the allele of the p2 then insert it
 			if (newIndiv[0].containsAllele(chromosomeSize - 1, i2.getGene(p2Ind)) == false) {
 				// if the actual gene of the child is empty then insert it
-				// FIXME Unnecessary iterations, think a way to use pos1 and
-				// pos2 to avoid the parent 1 part
 				for (int chldInd = 0; chldInd < chromosomeSize; chldInd++) {
 					if (newIndiv[0].getGene(chldInd) == -1) {
 						newIndiv[0].setGene(i2.getGene(p2Ind), chldInd);
@@ -240,8 +297,7 @@ public class Algorithm {
 			// If the child 1 not contains the allele of the p1 then insert it
 			if (newIndiv[1].containsAllele(chromosomeSize - 1, i1.getGene(p1Ind)) == false) {
 				// if the actual gene of the child is empty then insert it
-				// FIXME Unnecessary iterations, think a way to use pos1 and
-				// pos2 to avoid the parent 1 part
+				
 				for (int chldInd = 0; chldInd < chromosomeSize; chldInd++) {
 					if (newIndiv[1].getGene(chldInd) == -1) {
 						newIndiv[1].setGene(i1.getGene(p1Ind), chldInd);
@@ -263,9 +319,8 @@ public class Algorithm {
 	/**
 	 * Selection method, implements a simple tournament selection.
 	 *
-	 * @param pop
-	 *            the pop
-	 * @return the individual
+	 * @param pop the pop
+	 * @return the tournament winner individual
 	 */
 	public static Individual selection(Population pop) {
 
@@ -293,8 +348,8 @@ public class Algorithm {
 	/**
 	 * Mutation using the swap method.
 	 *
-	 * @param indiv            the individual to mutate
-	 * @return the int
+	 * @param indiv the individual to mutate
+	 * @return the number of mutations
 	 */
 	public static int mutation(Individual indiv) {
 
@@ -305,7 +360,7 @@ public class Algorithm {
 		int genesMutated = 0;
 
 		for (int i = 0; i < chromosomeSize; i++) {
-			if (rand.nextDouble() <= MUTATION_PROB) {
+			if (rand.nextDouble() <= GENE_MUTATION_PROB) {
 				// Finds a gene to swap with this
 				int j;
 				do {
@@ -331,18 +386,18 @@ public class Algorithm {
 	}
 
 	/**
-	 * Gets the alg type.
+	 * Gets the algorithm type.
 	 *
-	 * @return the alg type
+	 * @return the algorithm type
 	 */
 	public static AlgorithmType getAlgType() {
 		return algType;
 	}
 
 	/**
-	 * Sets the alg type.
+	 * Sets the algorithm type.
 	 *
-	 * @param algType the new alg type
+	 * @param algType the new algorithm type
 	 */
 	public static void setAlgType(AlgorithmType algType) {
 		Algorithm.algType = algType;

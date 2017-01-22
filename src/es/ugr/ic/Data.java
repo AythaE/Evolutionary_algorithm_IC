@@ -29,6 +29,12 @@ public class Data {
 	/** The Constant DATA_EXTENSION. */
 	private static final String DATA_EXTENSION = ".dat";
 	
+	/** The Constant SOLUTION_LOCATION. */
+	private static final String SOLUTION_LOCATION = "qap.optimalSolutions"+File.separatorChar;
+	
+	/** The Constant SOLUTION_EXTENSION. */
+	private static final String SOLUTION_EXTENSION = ".sln";
+	
 	/**
 	 * The Enum DataFile that contains all existent data files.
 	 */
@@ -47,8 +53,17 @@ public class Data {
 	/** The data file. */
 	private static File dataFile = null;
 	
+	/** The optimal solution file. */
+	private static File solutionFile = null;
+	
 	/**	The data file name */
 	private static DataFile dataFileName= null;
+	
+	/**
+	 * The optimal solution fitness to compare with the computed by this 
+	 * algorithm.
+	 */
+	private static long optimalSolution = 0;
 	
 	/** The size. */
 	private static int size = 0;
@@ -68,8 +83,9 @@ public class Data {
 	 */
 	public static void readData(DataFile fName) throws FileNotFoundException{
 		Scanner sc = null;
+		dataFileName = fName;
 		dataFile = new File(DATA_LOCATION + fName + DATA_EXTENSION);
-		
+		solutionFile = new File(SOLUTION_LOCATION +fName+SOLUTION_EXTENSION);
 		
 			sc = new Scanner(dataFile);
 			
@@ -104,8 +120,16 @@ public class Data {
 
 			
 			sc.close();
-		
-			dataFileName = fName;
+			
+			sc = new Scanner(solutionFile);
+			
+			//To read the problem size (already saved in size attribute)
+			sc.nextInt();
+			
+			optimalSolution = sc.nextLong();
+			
+			sc.close();
+			
 	}
 
 
@@ -155,6 +179,24 @@ public class Data {
 		return dataFileName;
 	}
 
+	/**
+	 * Gets the solution file.
+	 *
+	 * @return the solution file
+	 */
+	public static File getSolutionFile() {
+		return solutionFile;
+	}
+
+	/**
+	 * Gets the optimal solution fitness.
+	 *
+	 * @return the optimal solution fitness
+	 */
+	public static long getOptimalSolution() {
+		return optimalSolution;
+	}
+
 
 	/**
 	 * Prints the loaded file.
@@ -179,5 +221,6 @@ public class Data {
 			}
 			System.out.println();
 		}
+		System.out.println("\n\nOptimal solution: "+optimalSolution);
 	}
 }

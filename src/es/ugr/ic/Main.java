@@ -15,12 +15,15 @@
 package es.ugr.ic;
 
 import java.io.FileNotFoundException;
+import java.util.Scanner;
 
+import es.ugr.ic.Algorithm.AlgorithmType;
 import es.ugr.ic.Data.DataFile;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Main.
+ * The Class Main that execute the genetic algorithm, it contains the methods
+ * to interact with the user and some test using during the development of 
+ * this software.
  */
 public class Main {
 
@@ -31,19 +34,16 @@ public class Main {
 	 */
 	private static final int POPULATION_SIZE = 100;
 	
-	/** The Constant TAI_256C_OPTIMAL. */
-	private static final long TAI_256C_OPTIMAL = 44759294;
-	
-	/** The Constant TEST. */
-	private static final boolean TEST = true;
+	/** The Constant TEST to execute test methods or production methods. */
+	private static final boolean TEST = false;
 	
 	/** The Constant SEPARATOR. */
 	private static final String SEPARATOR = "--------------------------------------------------------------------------------";
 
 	/**
-	 * The main method .
+	 * The main method, handle the interaction with the user or execute the test methods.
 	 *
-	 * @param args            the arguments
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		try {
@@ -59,10 +59,61 @@ public class Main {
 		}
 		
 		else {
+			boolean variantSelected = false;
+			Scanner sc = new Scanner(System.in);
+			do {
+				String option;
+				System.out.println("Genetic algorithm for the QAP problem");
+				System.out.println("\nAuthor: Aythami Estévez Olivas <aythae@gmail.com>");
+				System.out.println("Repository: https://github.com/AythaE/Evolutionary_algorithm_IC");
+				System.out.println("\n\nChoose the variant of the algorithm");
+				System.out.println("1) Standard");
+				System.out.println("2) Lamarckian");
+				System.out.println("3) Baldwinian");
+				System.out.print("\nYour option: ");
+				
+				option = sc.nextLine().trim().toLowerCase();
+				
+				switch (option) {
+				case "1":
+				case "standard":
+					Algorithm.setAlgType(AlgorithmType.STANDARD);
+					variantSelected = true;
+					break;
+					
+				case "2":
+				case "lamarckian":
+					Algorithm.setAlgType(AlgorithmType.LAMARCKIAN);
+					variantSelected = true;
+					break;
+					
+				case "3":
+				case "baldwinian":
+					Algorithm.setAlgType(AlgorithmType.BALDWINIAN);
+					variantSelected = true;
+					break;
+					
+				default:
+					System.err.println("\nWrong option, available options:");
+					System.err.println("- 1 or Standard for the standard variant");
+					System.err.println("- 2 or Lamarckian for the lamarckian variant");
+					System.err.println("- 3 or Baldwinian for the baldwinian variant\n\n\n");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {}
+					break;
+				}
+				
+			} while (variantSelected == false);
+			
+			sc.close();
 			
 			long tIni, tFin;
-			tIni = System.currentTimeMillis();
 			int generation = 0;
+			
+			System.out.println("\n\n\nEXECUTING "+Algorithm.getAlgType()+" GENETIC ALGORITHM");
+			System.out.println("\n"+SEPARATOR);
+			tIni = System.currentTimeMillis();
 			Population population = new Population(POPULATION_SIZE);
 			population.generateRandomPopulation();
 			
@@ -77,7 +128,7 @@ public class Main {
 				System.out.println("Generation: "+generation);
 				System.out.println("Min fitness: "+population.getFittest(1)[0].getFitness());
 				System.out.println("Avg fitness: "+population.getPopulationFitness());
-				System.out.println("Mutation rate: "+Algorithm.getMutationRate()+"%");
+				System.out.println("Gene mutation rate: "+Algorithm.getMutationRate()+"%");
 				
 			}
 			tFin = System.currentTimeMillis();
@@ -87,12 +138,12 @@ public class Main {
 	}
 
 	/**
-	 * Prints the results.
+	 * Prints the results after the algorithm has finished.
 	 *
-	 * @param tIni the t ini
-	 * @param tFin the t fin
-	 * @param generation the generation
-	 * @param population the population
+	 * @param tIni the initial time when the algorithm started
+	 * @param tFin the final time when the algorithm finished
+	 * @param generation the number of generations
+	 * @param population the final population
 	 */
 	private static void printResults(long tIni, long tFin, int generation, Population population) {
 		
@@ -102,7 +153,7 @@ public class Main {
 		Individual fittest = population.getFittest(1)[0];
 		System.out.println("\n\nFinal results:\n");
 		System.out.println("- Algorithm type: "+Algorithm.getAlgType());
-		System.out.println("- Gene mutation probability: "+Algorithm.MUTATION_PROB);
+		System.out.println("- Gene mutation probability: "+Algorithm.GENE_MUTATION_PROB);
 		System.out.println("- Tournament size: "+Algorithm.TOURNAMENT_SIZE);
 		System.out.println("- Elitism individuals: "+Algorithm.ELITISM_INDIVIDUALS);
 		System.out.println(population);
@@ -111,28 +162,27 @@ public class Main {
 		long execTime = tFin - tIni;
 		System.out.println("- Time: "+execTime+" ms");
 		System.out.println("- Mean time per generation: "+((double)execTime/generation)+" ms");
-		if (Data.getDataFileName() == DataFile.tai256c) {
-			System.out.println("- Difference from optimal solution: "+
-			((((double)fittest.getFitness()-TAI_256C_OPTIMAL)/TAI_256C_OPTIMAL)*100)+"%");
-		}
+		
+		System.out.println("- Difference from optimal solution: "+
+		((((double)fittest.getFitness()-Data.getOptimalSolution())/Data.getOptimalSolution())*100)+"%");
+		
 	}
 
 	/**
 	 * Test methods of the other classes.
 	 */
-	@SuppressWarnings("unused")
 	private static void testMethods() {
 		
 		Data.printLoadedFile();
 		
 		Population population = new Population(POPULATION_SIZE);
-
+		Algorithm.setAlgType(AlgorithmType.STANDARD);
 		population.generateRandomPopulation();
 		Algorithm.evaluatePopulation(population);
 
 		System.out.println("\nAlg is finished: " + Algorithm.isFinished(population));
 
-		System.out.println(population);
+		System.out.println("\n"+population);
 		System.out.println("\nFittest 3 indiv: ");
 		Individual [] fittest = population.getFittest(3);
 		for (int i = 0; i < fittest.length; i++) {
@@ -152,8 +202,8 @@ public class Main {
 
 	
 		Individual[] childs = Algorithm.crossover(parent1, parent2);
-		childs[0].calcFitness();
-		childs[1].calcFitness();
+		childs[0].calcFitness(AlgorithmType.STANDARD);
+		childs[1].calcFitness(AlgorithmType.STANDARD);
 
 		System.out.println("\nCrossover:\n-Parent 1: " + parent1 + "\n-Parent 2: "
 				+ parent2 + "\n-Child 1:  " + childs[0]+ "\n-Child 2:  " + childs[1]);
@@ -172,19 +222,57 @@ public class Main {
 		Algorithm.evaluatePopulation(evolPopulation);
 		System.out.println(evolPopulation);
 		
+		
+		Individual individual = new Individual(Data.getSize(), true);
+		individual.calcFitness(AlgorithmType.STANDARD);
+		Individual individualSwaped = new Individual(individual);
+		
+		int tempGene = individualSwaped.getGene(0);
+		individualSwaped.setGene(individualSwaped.getGene(2), 0);
+		individualSwaped.setGene(tempGene, 2);
+		
+		System.out.println("\nCalc new fitness from old one");
+		System.out.println("- Original individual: " + individual);
+		System.out.println("- Swaped individual (fitness value is wrong): " + individualSwaped);
+		System.out.println("- Fitness with calcNewFitness method: "
+				+ individualSwaped.calcNewFitness(individual.getFitness(), individual.getGenes(), 0, 2));
+		System.out.println("- Good fitness value with the normal calcFitness method: " 
+				+ individualSwaped.calcFitness(AlgorithmType.STANDARD));
+		
+		
+		Algorithm.setAlgType(AlgorithmType.LAMARCKIAN);
 		Population optPopulation = new Population(POPULATION_SIZE);
-		System.out.println("\nGreedy Heuristic:");
+		System.out.println("\nLamarckian Algorithm:");
 		long tIni = 0, tFin=0;
+		
 		tIni = System.currentTimeMillis();
-		optPopulation.generateGreedyPopulation();
-		tFin = System.currentTimeMillis();
+		optPopulation.generateRandomPopulation();
 		Algorithm.evaluatePopulation(optPopulation);
+		tFin = System.currentTimeMillis();
+		
 		System.out.println(optPopulation);
 		long execTime = tFin - tIni;
 		System.out.println("- Time: "+execTime+" ms");
 		
 		
+		Algorithm.setAlgType(AlgorithmType.BALDWINIAN);
+		optPopulation = new Population(POPULATION_SIZE);
+		System.out.println("\nBaldwinian Algorithm:");
+		tIni = 0; tFin=0;
 		
+		tIni = System.currentTimeMillis();
+		optPopulation.generateRandomPopulation();
+		Algorithm.evaluatePopulation(optPopulation);
+		tFin = System.currentTimeMillis();
+		
+		System.out.println(optPopulation);
+		execTime = tFin - tIni;
+		System.out.println("- Time: "+execTime+" ms");
+		
+		System.out.println("\nEvaluating the last population by the standard method:");
+		Algorithm.setAlgType(AlgorithmType.STANDARD);
+		Algorithm.evaluatePopulation(optPopulation);
+		System.out.println(optPopulation);
 
 
 	}

@@ -17,11 +17,10 @@ package es.ugr.ic;
 import java.util.Arrays;
 import java.util.Random;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BEncoderStream;
+import es.ugr.ic.Algorithm.AlgorithmType;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Individual that match to a permutation.
+ * The Class Individual that match to a permutation (solution) of the QAP problem.
  */
 public class Individual implements Comparable<Individual>{
 	
@@ -40,10 +39,11 @@ public class Individual implements Comparable<Individual>{
 	 * @param chromosomeSize the gene length
 	 * @param initIndiv flag to indicate if the new individual must be 
 	 * initialized randomly
-	 * @param applyGreedy TODO
 	 */
-	public Individual(int chromosomeSize, boolean initIndiv, boolean applyGreedy)
+	public Individual(int chromosomeSize, boolean initIndiv)
 	{
+		this.chromosomeSize = chromosomeSize;
+		
 		this.genes = new int[chromosomeSize];
 		Arrays.fill(this.genes, -1);
 		
@@ -64,19 +64,10 @@ public class Individual implements Comparable<Individual>{
 				else{
 					i--;
 				}
-			}
-			
-			if (applyGreedy) {
-				Individual optimized = greedyHeuristic();
-				
-				this.chromosomeSize = optimized.getChromosomeSize();
-				this.fitness = optimized.getFitness();
-				this.genes = optimized.getGenes();
-			}
-			
+			}	
 		}
 		
-		this.chromosomeSize = chromosomeSize;
+	
 	}
 
 	/**
@@ -85,6 +76,15 @@ public class Individual implements Comparable<Individual>{
 	 * @param individual the original individual to copy
 	 */
 	public Individual(Individual individual) {
+		copyIndividual(individual);
+	}
+
+	/**
+	 * Copy an individual overwritting the actual one.
+	 *
+	 * @param individual the individual
+	 */
+	private void copyIndividual(Individual individual) {
 		this.chromosomeSize = individual.getChromosomeSize();
 		this.fitness = individual.getFitness();
 		this.genes = Arrays.copyOf(individual.getGenes(), individual.getGenes().length);
@@ -108,14 +108,16 @@ public class Individual implements Comparable<Individual>{
 	}
 	
 	/**
-	 * Greedy heuristic.
+	 * Greedy heuristic based in 2-opt to generate an better individual.
+	 * It is used by the baldwinian and the lamarckian variant
 	 *
-	 * @return the individual
+	 * @return the individual to be optimizated
 	 */
 	public Individual greedyHeuristic(){
 		Individual best;
 		Individual S = new Individual(this);
 		
+		S.calcFitnessStandard();
 		do {
 			best = S;
 			for (int i = 0; i < genes.length; i++) {
@@ -126,7 +128,8 @@ public class Individual implements Comparable<Individual>{
 					T.setGene(T.getGene(j), i);
 					T.setGene(tempGene, j);
 					
-					T.calcFitness();
+					//T.calcFitness();
+					T.calcNewFitness(S.getFitness(), S.getGenes(), i, j);
 					
 					if (T.getFitness() < S.getFitness()) {
 						S = new Individual(T);
@@ -137,6 +140,7 @@ public class Individual implements Comparable<Individual>{
 		
 		return S;
 	}
+	
 	/**
 	 * Gets the genes.
 	 *
@@ -178,32 +182,115 @@ public class Individual implements Comparable<Individual>{
 	/**
 	 * Calculate fitness.
 	 *
-	 * @return the long
+	 * @param algType the algorithm type
+	 * @return the fitness
 	 */
-	public long calcFitness(){
-		long tempFitness= 1;
-		int [][] distance = Data.getDistances();
-		long [][] matFlow = Data.getMatFlow();
+	public long calcFitness(AlgorithmType algType) {
 		
-		for (int i = 0; i < distance.length; i++) {
-			for (int j = 0; j < distance[i].length; j++) {
+		if (algType == AlgorithmType.LAMARCKIAN) {
+			return calcFitnessLamarckian();
+		}
+		
+		if (algType == AlgorithmType.BALDWINIAN) {
+			return calcFitnessBalwinian();
+		}
+		
+		return calcFitnessStandard();
+	}
+	
+	/**
+	 * Calculate fitness for the standard variant of the genetic algorithm.
+	 *
+	 * @return the fitness
+	 */
+	public long calcFitnessStandard (){
+		long tempFitness = 0;
+		int[][] distance = Data.getDistances();
+		long[][] matFlow = Data.getMatFlow();
+
+		for (int i = 0; i < chromosomeSize; i++) {
+			for (int j = 0; j < chromosomeSize; j++) {
+
 				tempFitness += matFlow[i][j] * distance[genes[i]][genes[j]];
+
 			}
 		}
 		fitness = tempFitness;
-		
-		return fitness;
+
+		return tempFitness;
 	}
 
+	/**
+	 * Calculate fitness for the lamarckian variant of the genetic algorithm.
+	 *
+	 * @return the long
+	 */
+	public long calcFitnessLamarckian (){
+		Individual optimized = greedyHeuristic();
+		
+		this.copyIndividual(optimized);
+		
+		return this.fitness;
+	}
+	
+	/**
+	 * Calculate fitness for the baldwinian variant of the genetic algorithm.
+	 *
+	 * @return the long
+	 */
+	public long calcFitnessBalwinian (){
+		Individual optimized = greedyHeuristic();
+		
+		this.fitness = optimized.getFitness();
+		
+		return this.fitness;
+	}
+	
+	/**
+	 * Calculate fitness after a swap of two genes using the old fitness to
+	 * calculate the new one with less operations.
+	 *
+	 * @param oldFit the old fitness before the swap
+	 * @param oldGene the old gene before the swap
+	 * @param nGene1 position of the swap gene 1
+	 * @param nGene2 position of the swap gene 2
+	 * @return the new fitness
+	 */
+	public long calcNewFitness(long oldFit, int[] oldGene, int nGene1, int nGene2){
+		long tempFitness = oldFit;
+		int [][] distance = Data.getDistances();
+		long [][] matFlow = Data.getMatFlow();
+		for (int i = 0; i < chromosomeSize; i++) {
+			
+			tempFitness -= matFlow[nGene1][i] * distance[oldGene[nGene1]][oldGene[i]];
+			tempFitness += matFlow[nGene1][i] * distance[genes[nGene1]][genes[i]];
+			
+
+			tempFitness -= matFlow[i][nGene1] * distance[oldGene[i]][oldGene[nGene1]];
+			tempFitness += matFlow[i][nGene1] * distance[genes[i]][genes[nGene1]];
+		
+
+			tempFitness -= matFlow[nGene2][i] * distance[oldGene[nGene2]][oldGene[i]];
+			tempFitness += matFlow[nGene2][i] * distance[genes[nGene2]][genes[i]];
+			
+			tempFitness -= matFlow[i][nGene2] * distance[oldGene[i]][oldGene[nGene2]];
+			tempFitness += matFlow[i][nGene2] * distance[genes[i]][genes[nGene2]];
+	
+			
+		}
+		
+		fitness = tempFitness;
+		return tempFitness;
+
+	}
+	
 	/**
 	 * Gets the fitness.
 	 *
 	 * @return the fitness
 	 */
 	public long getFitness() {
-		if (fitness == 0) {
-			calcFitness();
-		}
+	
 		return fitness;
 	}
 	

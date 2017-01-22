@@ -94,8 +94,8 @@ Me pondré a leer la presentación G2 de los apuntes de la asignatura para enten
 - [x] **¿Cuál será la función de fitness?** El valor de la función de optimización en negativo.
 - [x] **¿Qué es la permutación p() sobre el conjunto de instalaciones?** Es un vector de enteros del tamaño del problema concreto en los que no se puede repetir ningún elemento.  
 - [x] **¿Cual será el operador de cruce?** Cruce ordenado
-- [ ] **¿Cuál será el mecanismo de selección?**
-- [ ] **¿Cuál será el operador de mutación?**
+- [x] **¿Cuál será el mecanismo de selección?** selección por torneo
+- [x] **¿Cuál será el operador de mutación?** mutación por intercambio de valores para respetar las condiciones de la permutación
 
 #### Comentarios de clase
 Hay que minimzar la sumatoria de A[i][j] * B [P(i)][P(j)]
@@ -141,3 +141,8 @@ Voy a intentar optimizar usando un algorítmo greedy para obtener las variables 
 Probándolo con un tamaño de población más normal, de 100 individuos, he logrado que el algoritmo se ejecute en 8 minutos y 15 segundos. Aún así habría que optimizar más, siguiendo los comentarios del profesor se puede optimizar el proceso de cálculo de fitness durante el proceso de optimización local usando el fitness actual y los cambios realizados en lugar de recalcular entero, tendré que estudiarlo para mañana. En cualquier caso parece prometedora la optimización, solo aplicada a la generación de una población se obtienen resultados con fitness del orden de 44.900.000 mientras que el mejor resultado obtenido previamente era de 46.131.559.
 
 Cuando logre optimizar ese proceso tendré que crear una ejecución del algoritmo teniendo en cuenta el tipo de optimización así como la aplicación del óptimo local en función de la variante concreta del algoritmo. Tras esto solo quedaría jugar con los paramétros y ver como se obtienen los mejores resultados.
+
+## 22/01/2017
+He implementado un método para calcular el fitness de un individuo tras intercambiarle 2 genes usando el fitness y los genes previos al cambio, con lo que se reduce enormemente el tiempo procesamiento al no tener que calcular el fitness entero desde 0. Con ello consigo tiempos del orden de 20 segundos para la generación de una población de 100 individuos con optimización greedy.
+
+Para adaptar esa optimización me ha tocado remodelar un poco el código, en lugar de generar población greedy directamente lo genero aleatoriamente y a la hora de evaluar la población en función de la variante del algoritmo calculo el fitness del modo indicado, aplicando optimización greedy en el caso de variante balwiniana (guardando solo el fitness óptimo) o la variante lamarkiana (sustituyendo al individuo por la version )
