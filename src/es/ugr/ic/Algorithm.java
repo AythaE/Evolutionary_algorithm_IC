@@ -36,7 +36,7 @@ public class Algorithm {
 	public static final double GENE_MUTATION_PROB = 0.003;
 
 	/** The Constant ELITISM_INDIVIDUALS. */
-	public static final int ELITISM_INDIVIDUALS = 2;
+	public static final int ELITISM_INDIVIDUALS = 1;
 
 	/**
 	 * The Enum AlgorithmType that indicate the variant of the genetic algorithm.
@@ -97,7 +97,9 @@ public class Algorithm {
 			mutationCount += mutation(childs[1]);
 
 			newPop.saveIndividual(childs[0], i);
-			newPop.saveIndividual(childs[1], i + 1);
+			if (i + 1 < popSize) {
+				newPop.saveIndividual(childs[1], i + 1);
+			}
 
 		}
 

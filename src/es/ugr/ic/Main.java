@@ -32,7 +32,7 @@ public class Main {
 	 * versions of the algorithm choose a multiple of 4 or 2 to take full 
 	 * advantage of multithread 
 	 */
-	private static final int POPULATION_SIZE = 40;
+	private static final int POPULATION_SIZE = 100;
 	
 	/** The Constant TEST to execute test methods or production methods. */
 	private static final boolean TEST = false;
