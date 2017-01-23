@@ -27,13 +27,13 @@ public class Algorithm {
 	private static final int MAX_GENERATION_WO_IMPROVEMENT_STANDARD = 200;
 	
 	/** The Constant MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED. */
-	private static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 100;
+	private static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 25;
 
 	/** The Constant TOURNAMENT_SIZE. */
 	public static final int TOURNAMENT_SIZE = 5;
 
 	/** The Constant GENE_MUTATION_PROB. */
-	public static final double GENE_MUTATION_PROB = 0.0025;
+	public static final double GENE_MUTATION_PROB = 0.003;
 
 	/** The Constant ELITISM_INDIVIDUALS. */
 	public static final int ELITISM_INDIVIDUALS = 2;
