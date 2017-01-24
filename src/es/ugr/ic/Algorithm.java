@@ -24,19 +24,19 @@ import java.util.Set;
 public class Algorithm {
 
 	/** The Constant MAX_GENERATION_WO_IMPROVEMENT_STANDARD. */
-	private static final int MAX_GENERATION_WO_IMPROVEMENT_STANDARD = 200;
+	public static final int MAX_GENERATION_WO_IMPROVEMENT_STANDARD = 200;
 	
 	/** The Constant MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED. */
-	private static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 25;
+	public static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 20;
 
 	/** The Constant TOURNAMENT_SIZE. */
 	public static final int TOURNAMENT_SIZE = 5;
 
 	/** The Constant GENE_MUTATION_PROB. */
-	public static final double GENE_MUTATION_PROB = 0.003;
+	public static final double GENE_MUTATION_PROB = 0.004;
 
 	/** The Constant ELITISM_INDIVIDUALS. */
-	public static final int ELITISM_INDIVIDUALS = 1;
+	public static final int ELITISM_INDIVIDUALS = 2;
 
 	/**
 	 * The Enum AlgorithmType that indicate the variant of the genetic algorithm.

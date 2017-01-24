@@ -15,6 +15,7 @@
 package es.ugr.ic;
 
 import java.io.FileNotFoundException;
+import java.nio.file.AccessMode;
 import java.util.Scanner;
 
 import es.ugr.ic.Algorithm.AlgorithmType;
@@ -32,7 +33,12 @@ public class Main {
 	 * versions of the algorithm choose a multiple of 4 or 2 to take full 
 	 * advantage of multithread 
 	 */
-	private static final int POPULATION_SIZE = 100;
+	private static final int POPULATION_SIZE = 20;
+	
+	/**
+	 * The Constant MAX_NUM_GENERATIONS
+	 */
+	private static final int MAX_NUM_GENERATIONS = 20;
 	
 	/** The Constant TEST to execute test methods or production methods. */
 	private static final boolean TEST = false;
@@ -106,35 +112,121 @@ public class Main {
 				
 			} while (variantSelected == false);
 			
+			variantSelected = false;
+			
+			int maxGenerationWOImprove = 0;
+			if (Algorithm.getAlgType() == AlgorithmType.STANDARD) {
+				maxGenerationWOImprove = Algorithm.MAX_GENERATION_WO_IMPROVEMENT_STANDARD;
+			} else {
+				maxGenerationWOImprove = Algorithm.MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED;
+			}
+			
+			do {
+				String option2;
+				
+				System.out.println("\n\nDo you want to execute the algorithm:");
+				System.out.println("1) during " + MAX_NUM_GENERATIONS
+						+ " generations");
+				System.out.println("2) until " + maxGenerationWOImprove
+						+ " generations"
+						+ " without improve have been reached?: ");
+				System.out.print("\nYour option: ");
+				option2 = sc.nextLine().trim().toLowerCase();
+				switch (option2) {
+				case "1":
+					executeAGivenNumberOfGenerations();
+					variantSelected = true;
+					break;
+
+				case "2":
+					executeUntilNoMoreImprove();
+					variantSelected = true;
+					break;
+
+				default:
+					System.err.println("\nWrong option, available options:");
+					System.err.println("- 1 for " + MAX_NUM_GENERATIONS
+							+ " generations of the algorithm");
+					System.err
+							.println("- 2 for executing until "
+									+ maxGenerationWOImprove
+									+ " generations without improve have been reached\n\n\n");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+					}
+					break;
+				}
+			} while (variantSelected == false);
+			
 			sc.close();
 			
-			long tIni, tFin;
-			int generation = 0;
 			
-			System.out.println("\n\n\nEXECUTING "+Algorithm.getAlgType()+" GENETIC ALGORITHM");
-			System.out.println("\n"+SEPARATOR);
-			tIni = System.currentTimeMillis();
-			Population population = new Population(POPULATION_SIZE);
-			population.generateRandomPopulation();
-			
-			Algorithm.evaluatePopulation(population);
-			
-			while (Algorithm.isFinished(population) == false) {
-				generation++;
-				population = Algorithm.evolvePopulation(population);
-				Algorithm.evaluatePopulation(population);
-				
-				System.out.println(SEPARATOR);
-				System.out.println("Generation: "+generation);
-				System.out.println("Min fitness: "+population.getFittest(1)[0].getFitness());
-				System.out.println("Avg fitness: "+population.getPopulationFitness());
-				System.out.println("Gene mutation rate: "+Algorithm.getMutationRate()+"%");
-				
-			}
-			tFin = System.currentTimeMillis();
-			printResults(tIni, tFin, generation, population);
 
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	private static void executeUntilNoMoreImprove(){
+		long tIni, tFin;
+		int generation = 0;
+		
+		System.out.println("\n\n\nEXECUTING "+Algorithm.getAlgType()+" GENETIC ALGORITHM");
+		System.out.println("\n"+SEPARATOR);
+		tIni = System.currentTimeMillis();
+		Population population = new Population(POPULATION_SIZE);
+		population.generateRandomPopulation();
+		
+		Algorithm.evaluatePopulation(population);
+		
+		while (Algorithm.isFinished(population) == false) {
+			generation++;
+			population = Algorithm.evolvePopulation(population);
+			Algorithm.evaluatePopulation(population);
+			
+			System.out.println(SEPARATOR);
+			System.out.println("Generation: "+generation);
+			System.out.println("Min fitness: "+population.getFittest(1)[0].getFitness());
+			System.out.println("Avg fitness: "+population.getPopulationFitness());
+			System.out.println("Gene mutation rate: "+Algorithm.getMutationRate()+"%");
+			
+		}
+		tFin = System.currentTimeMillis();
+		printResults(tIni, tFin, generation, population);
+
+	}
+	/**
+	 * 
+	 */
+	private static void executeAGivenNumberOfGenerations(){
+		long tIni, tFin;
+		int generation = 0;
+		
+		System.out.println("\n\n\nEXECUTING "+Algorithm.getAlgType()+" GENETIC ALGORITHM");
+		System.out.println("\n"+SEPARATOR);
+		tIni = System.currentTimeMillis();
+		Population population = new Population(POPULATION_SIZE);
+		population.generateRandomPopulation();
+		
+		Algorithm.evaluatePopulation(population);
+		
+		for(int i=0; i< MAX_NUM_GENERATIONS; i++) {
+			generation++;
+			population = Algorithm.evolvePopulation(population);
+			Algorithm.evaluatePopulation(population);
+			
+			System.out.println(SEPARATOR);
+			System.out.println("Generation: "+generation);
+			System.out.println("Min fitness: "+population.getFittest(1)[0].getFitness());
+			System.out.println("Avg fitness: "+population.getPopulationFitness());
+			System.out.println("Gene mutation rate: "+Algorithm.getMutationRate()+"%");
+			
+		}
+		tFin = System.currentTimeMillis();
+		printResults(tIni, tFin, generation, population);
+
 	}
 
 	/**
