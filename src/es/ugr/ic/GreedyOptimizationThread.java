@@ -60,8 +60,21 @@ public class GreedyOptimizationThread implements Runnable {
 	@Override
 	public void run() {
 
+		if (indexIni < Algorithm.ELITISM_INDIVIDUALS) {
+			for (int i = 0; i < Algorithm.ELITISM_INDIVIDUALS; i++) {
+				sumFitness += individuals[i].calcFitness(algType);
+			}
+			
+			indexIni+=Algorithm.ELITISM_INDIVIDUALS;
+		}
+		
 		for (int i = indexIni; i < indexFin; i++) {
-			sumFitness += individuals[i].calcFitness(algType);
+			
+			if (Math.random() > Algorithm.OPTIMIZATION_PROB) 
+				sumFitness += individuals[i].calcFitness(algType);
+			else
+				sumFitness += individuals[i].calcFitness(AlgorithmType.STANDARD);
+
 		}
 	}
 

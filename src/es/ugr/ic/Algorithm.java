@@ -27,14 +27,17 @@ public class Algorithm {
 	public static final int MAX_GENERATION_WO_IMPROVEMENT_STANDARD = 200;
 	
 	/** The Constant MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED. */
-	public static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 20;
+	public static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 40;
 
 	/** The Constant TOURNAMENT_SIZE. */
 	public static final int TOURNAMENT_SIZE = 5;
 
 	/** The Constant GENE_MUTATION_PROB. */
 	public static final double GENE_MUTATION_PROB = 0.004;
-
+	
+	/** The Constant OPTIMIZATION_PROB. */
+	public static final double OPTIMIZATION_PROB = 0.33; 
+	
 	/** The Constant ELITISM_INDIVIDUALS. */
 	public static final int ELITISM_INDIVIDUALS = 2;
 
@@ -173,9 +176,19 @@ public class Algorithm {
 		
 		} 
 		//If number of processors is less than 2 then execute it on a single thread
+		//TODO comment optimization prob and elitism indiv
 		else{
-			for (Individual indiv : popIndiv) {
-				popFitness += indiv.calcFitness(algType);
+			Individual [] indiv = pop.getIndividuals();
+			
+			for (int i = 0; i < ELITISM_INDIVIDUALS; i++) {
+				popFitness += indiv[i].calcFitness(algType);
+			}
+
+			for (int i = ELITISM_INDIVIDUALS; i < popSize; i++) {
+				if (Math.random() > OPTIMIZATION_PROB) 
+					popFitness += indiv[i].calcFitness(algType);
+				else
+					popFitness += indiv[i].calcFitness(AlgorithmType.STANDARD);
 			}
 
 		}

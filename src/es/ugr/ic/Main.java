@@ -15,7 +15,6 @@
 package es.ugr.ic;
 
 import java.io.FileNotFoundException;
-import java.nio.file.AccessMode;
 import java.util.Scanner;
 
 import es.ugr.ic.Algorithm.AlgorithmType;
@@ -33,12 +32,12 @@ public class Main {
 	 * versions of the algorithm choose a multiple of 4 or 2 to take full 
 	 * advantage of multithread 
 	 */
-	private static final int POPULATION_SIZE = 20;
+	private static final int POPULATION_SIZE = 100;
 	
 	/**
 	 * The Constant MAX_NUM_GENERATIONS
 	 */
-	private static final int MAX_NUM_GENERATIONS = 20;
+	private static final int MAX_NUM_GENERATIONS = 100;
 	
 	/** The Constant TEST to execute test methods or production methods. */
 	private static final boolean TEST = false;
@@ -167,7 +166,7 @@ public class Main {
 	}
 	
 	/**
-	 * 
+	 * TODO
 	 */
 	private static void executeUntilNoMoreImprove(){
 		long tIni, tFin;
@@ -188,7 +187,7 @@ public class Main {
 			
 			System.out.println(SEPARATOR);
 			System.out.println("Generation: "+generation);
-			System.out.println("Min fitness: "+population.getFittest(1)[0].getFitness());
+			System.out.println("Best individual: "+population.getFittest(1)[0]);
 			System.out.println("Avg fitness: "+population.getPopulationFitness());
 			System.out.println("Gene mutation rate: "+Algorithm.getMutationRate()+"%");
 			
@@ -198,7 +197,7 @@ public class Main {
 
 	}
 	/**
-	 * 
+	 * TODO
 	 */
 	private static void executeAGivenNumberOfGenerations(){
 		long tIni, tFin;
@@ -219,7 +218,7 @@ public class Main {
 			
 			System.out.println(SEPARATOR);
 			System.out.println("Generation: "+generation);
-			System.out.println("Min fitness: "+population.getFittest(1)[0].getFitness());
+			System.out.println("Best individual: "+population.getFittest(1)[0]);
 			System.out.println("Avg fitness: "+population.getPopulationFitness());
 			System.out.println("Gene mutation rate: "+Algorithm.getMutationRate()+"%");
 			
@@ -246,18 +245,21 @@ public class Main {
 		System.out.println("\n\nFinal results:\n");
 		System.out.println("- Algorithm type: "+Algorithm.getAlgType());
 		System.out.println("- Gene mutation probability: "+Algorithm.GENE_MUTATION_PROB);
+		System.out.println("- Optimization probability: "+Algorithm.OPTIMIZATION_PROB);
 		System.out.println("- Tournament size: "+Algorithm.TOURNAMENT_SIZE);
 		System.out.println("- Elitism individuals: "+Algorithm.ELITISM_INDIVIDUALS);
 		System.out.println(population);
 		System.out.println("- Generation: "+generation);
 		System.out.println("- Best solution: "+fittest);
+		System.out.println("- Difference from optimal solution: "+
+				((((double)fittest.getFitness()-Data.getOptimalSolution())/Data.getOptimalSolution())*100)+"%");
+			
+		System.out.println("- Recalculated best fitness: "+fittest.calcFitnessStandard());
 		long execTime = tFin - tIni;
 		System.out.println("- Time: "+execTime+" ms");
 		System.out.println("- Mean time per generation: "+((double)execTime/generation)+" ms");
 		
-		System.out.println("- Difference from optimal solution: "+
-		((((double)fittest.getFitness()-Data.getOptimalSolution())/Data.getOptimalSolution())*100)+"%");
-		
+			
 	}
 
 	/**
