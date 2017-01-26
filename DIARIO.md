@@ -154,3 +154,8 @@ Ahora solo falta retocar parámetros para obtener la mejor solución posible. He
 - Probabilidad de mutación de cada gen
 - Tamaño del torneo
 - Individuos élite
+
+## 26/01/2016
+Tras todos los problemas con el ordenador estoy haciendo la memoria, he creado una hoja de calculo con los mejores resultados de cada algoritmo, tendré que ir escribiendo una memoria y estaría bien seguir haciendo alguna prueba más variando el tamaño de torneo. 
+
+Estaría bien crear un método para combrobar el fitness de una solución pegando el resultado de `Array.toString()`.
