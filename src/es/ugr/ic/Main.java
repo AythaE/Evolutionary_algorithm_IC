@@ -33,7 +33,7 @@ public class Main {
 	 * versions of the algorithm choose a multiple of 4 or 2 to take full 
 	 * advantage of multithread.
 	 */
-	private static final int POPULATION_SIZE = 80;
+	private static final int POPULATION_SIZE = 60;
 	
 	/**  
 	 * The Constant MAX_NUM_GENERATIONS. It set the maximum number of generations

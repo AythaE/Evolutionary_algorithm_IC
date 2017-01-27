@@ -73,7 +73,7 @@ public class GreedyOptimizationThread implements Runnable {
 		
 		for (int i = indexIni; i < indexFin; i++) {
 			
-			if (Math.random() > Algorithm.OPTIMIZATION_PROB) 
+			if (Math.random() < Algorithm.OPTIMIZATION_PROB) 
 				sumFitness += individuals[i].calcFitness(algType);
 			else
 				sumFitness += individuals[i].calcFitness(AlgorithmType.STANDARD);

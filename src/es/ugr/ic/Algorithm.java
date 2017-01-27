@@ -38,21 +38,21 @@ public class Algorithm {
 	 * number of generations without improvement and the optimized
 	 * variants of the algorithm were selected.
 	 */
-	public static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 50;
+	public static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 100;
 
 	/** The Constant TOURNAMENT_SIZE for the tournament selection. */
-	public static final int TOURNAMENT_SIZE = 5;
+	public static final int TOURNAMENT_SIZE = 6;
 
 	/** 
 	 * The Constant GENE_MUTATION_PROB that handle the mutation probability of
 	 * every single gene. 
 	 */
-	public static final double GENE_MUTATION_PROB = 0.01;
+	public static final double GENE_MUTATION_PROB = 0.0032;
 	
 	/** 
 	 * The Constant OPTIMIZATION_PROB for the generation of optimized individuals
 	 * in the optimized variants of the algorithm. */
-	public static final double OPTIMIZATION_PROB = 0.5; 
+	public static final double OPTIMIZATION_PROB = 0.6; 
 	
 	/** The Constant ELITISM_INDIVIDUALS for the elitism model. */
 	public static final int ELITISM_INDIVIDUALS = 2;
@@ -204,7 +204,7 @@ public class Algorithm {
 			}
 
 			for (int i = ELITISM_INDIVIDUALS; i < popSize; i++) {
-				if (Math.random() > OPTIMIZATION_PROB) 
+				if (Math.random() < OPTIMIZATION_PROB) 
 					popFitness += indiv[i].calcFitness(algType);
 				else
 					popFitness += indiv[i].calcFitness(AlgorithmType.STANDARD);
