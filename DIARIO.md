@@ -156,6 +156,8 @@ Ahora solo falta retocar parámetros para obtener la mejor solución posible. He
 - Individuos élite
 
 ## 26/01/2016
-Tras todos los problemas con el ordenador estoy haciendo la memoria, he creado una hoja de calculo con los mejores resultados de cada algoritmo, tendré que ir escribiendo una memoria y estaría bien seguir haciendo alguna prueba más variando el tamaño de torneo. 
+Tras todos los problemas con el ordenador estoy haciendo la memoria, he creado una hoja de calculo con los mejores resultados de cada algoritmo, tendré que ir escribiendo una memoria y estaría bien seguir haciendo alguna prueba más variando el tamaño de torneo.
 
-Estaría bien crear un método para combrobar el fitness de una solución pegando el resultado de `Array.toString()`.
+Estaría bien crear un método para comprobar el fitness de una solución pegando el resultado de `Array.toString()`.
+
+Siguiendo los consejos de JJ en lugar de aplicar la optimización 2-opt a todos los individuos de la población se lo aplico a un porcentaje de los individuos

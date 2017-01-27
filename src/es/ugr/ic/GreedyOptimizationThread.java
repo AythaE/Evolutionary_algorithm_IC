@@ -54,7 +54,10 @@ public class GreedyOptimizationThread implements Runnable {
 		this.individuals = individuals;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Execute the calculation of the fitness (optimized or not depending on
+	 * algType attribute)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override

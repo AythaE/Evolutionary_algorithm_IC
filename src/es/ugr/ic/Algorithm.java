@@ -23,22 +23,38 @@ import java.util.Set;
  */
 public class Algorithm {
 
-	/** The Constant MAX_GENERATION_WO_IMPROVEMENT_STANDARD. */
+	/** 
+	 * The Constant MAX_GENERATION_WO_IMPROVEMENT_STANDARD. It handle the 
+	 * termination condition in case that the execution until a fixed 
+	 * number of generations without improvement and the standard
+	 * variant of the algorithm were selected.
+	 */
 	public static final int MAX_GENERATION_WO_IMPROVEMENT_STANDARD = 200;
 	
-	/** The Constant MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED. */
-	public static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 40;
 
-	/** The Constant TOURNAMENT_SIZE. */
+	/** 
+	 * The Constant MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED. It handle the 
+	 * termination condition in case that the execution until a fixed 
+	 * number of generations without improvement and the optimized
+	 * variants of the algorithm were selected.
+	 */
+	public static final int MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED = 50;
+
+	/** The Constant TOURNAMENT_SIZE for the tournament selection. */
 	public static final int TOURNAMENT_SIZE = 5;
 
-	/** The Constant GENE_MUTATION_PROB. */
-	public static final double GENE_MUTATION_PROB = 0.004;
+	/** 
+	 * The Constant GENE_MUTATION_PROB that handle the mutation probability of
+	 * every single gene. 
+	 */
+	public static final double GENE_MUTATION_PROB = 0.01;
 	
-	/** The Constant OPTIMIZATION_PROB. */
-	public static final double OPTIMIZATION_PROB = 0.33; 
+	/** 
+	 * The Constant OPTIMIZATION_PROB for the generation of optimized individuals
+	 * in the optimized variants of the algorithm. */
+	public static final double OPTIMIZATION_PROB = 0.5; 
 	
-	/** The Constant ELITISM_INDIVIDUALS. */
+	/** The Constant ELITISM_INDIVIDUALS for the elitism model. */
 	public static final int ELITISM_INDIVIDUALS = 2;
 
 	/**
@@ -46,21 +62,21 @@ public class Algorithm {
 	 */
 	public enum AlgorithmType {
 
-		/** The standard. */
+		/** The standard variant. */
 		STANDARD,
-		/** The lamarckian. */
+		/** The lamarckian variant. */
 		LAMARCKIAN,
-		/** The baldwinian. */
+		/** The baldwinian variant. */
 		BALDWINIAN
 	}
 
-	/** The max population fitness. */
+	/** The min population fitness. */
 	private static long minPopulationFitness = Integer.MAX_VALUE;
 
 	/** The generations WO improvement. */
 	private static long generationsWOImprovement = 0;
 
-	/** The alg type. */
+	/** The algorithm type. */
 	private static AlgorithmType algType = AlgorithmType.STANDARD;
 	
 	/** The mutation rate. */
@@ -176,7 +192,10 @@ public class Algorithm {
 		
 		} 
 		//If number of processors is less than 2 then execute it on a single thread
-		//TODO comment optimization prob and elitism indiv
+		//For the elitism individuals calculate the fitness in an optimized way, 
+		//if the optimized variant of the algorithms are selected, for the rest
+		//only calculate the optimized fitness for a percent of individuals.
+		//See the constant OPTIMIZATION_PROB
 		else{
 			Individual [] indiv = pop.getIndividuals();
 			
@@ -193,7 +212,7 @@ public class Algorithm {
 
 		}
 		
-		
+		//Calculate the mean fitness of the population
 		popFitness /= pop.getPopulationSize();
 
 		pop.setPopulationFitness(popFitness);
@@ -203,9 +222,12 @@ public class Algorithm {
 
 	/**
 	 * Check if Algorithm has finished. The termination condition of this
-	 * algorithm is a max number of generations without improvement.
+	 * algorithm is a max number of generations without improvement. This number
+	 * is represented by the constants 
+	 * {@link Algorithm#MAX_GENERATION_WO_IMPROVEMENT_STANDARD} and
+	 * {@link Algorithm#MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED}.
 	 *
-	 * @param pop the pop
+	 * @param pop the population to check
 	 * @return true, if is finished
 	 */
 	public static boolean isFinished(Population pop) {
@@ -239,7 +261,7 @@ public class Algorithm {
 	 *            the individual 1, one of the parents
 	 * @param i2
 	 *            the individual 2, one of the parents
-	 * @return the 2 childs
+	 * @return the 2 children
 	 */
 	public static Individual[] crossover(Individual i1, Individual i2) {
 
@@ -334,7 +356,7 @@ public class Algorithm {
 	/**
 	 * Selection method, implements a simple tournament selection.
 	 *
-	 * @param pop the pop
+	 * @param pop the population
 	 * @return the tournament winner individual
 	 */
 	public static Individual selection(Population pop) {
@@ -371,7 +393,6 @@ public class Algorithm {
 		int chromosomeSize = indiv.getChromosomeSize();
 		Random rand = new Random();
 
-		// TODO remove this, only for develpment test
 		int genesMutated = 0;
 
 		for (int i = 0; i < chromosomeSize; i++) {

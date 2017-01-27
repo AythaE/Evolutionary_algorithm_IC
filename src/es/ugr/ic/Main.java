@@ -20,6 +20,7 @@ import java.util.Scanner;
 import es.ugr.ic.Algorithm.AlgorithmType;
 import es.ugr.ic.Data.DataFile;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Main that execute the genetic algorithm, it contains the methods
  * to interact with the user and some test using during the development of 
@@ -30,12 +31,13 @@ public class Main {
 	/** 
 	 * The Constant POPULATION_SIZE. If you plan to execute the optimized
 	 * versions of the algorithm choose a multiple of 4 or 2 to take full 
-	 * advantage of multithread 
+	 * advantage of multithread.
 	 */
-	private static final int POPULATION_SIZE = 100;
+	private static final int POPULATION_SIZE = 80;
 	
-	/**
-	 * The Constant MAX_NUM_GENERATIONS
+	/**  
+	 * The Constant MAX_NUM_GENERATIONS. It set the maximum number of generations
+	 * in case that the execution of a fixed number of generations were selected. 
 	 */
 	private static final int MAX_NUM_GENERATIONS = 100;
 	
@@ -64,6 +66,7 @@ public class Main {
 		}
 		
 		else {
+			//The user select the variant of the algorithm that want to execute
 			boolean variantSelected = false;
 			Scanner sc = new Scanner(System.in);
 			do {
@@ -120,6 +123,9 @@ public class Main {
 				maxGenerationWOImprove = Algorithm.MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED;
 			}
 			
+			//The user select the termination condition: A fixed number of generations 
+			//or execute the algorithm until a fixed number of generation without 
+			//improvement were reached (best individual don't change)  
 			do {
 				String option2;
 				
@@ -165,8 +171,13 @@ public class Main {
 		}
 	}
 	
+	
 	/**
-	 * TODO
+	 * Execute the algorithm until a fixed number of generations without 
+	 * improvement where reached. The fixed number of generation is 
+	 * different in standard and optimizated algorithms. Check the constants
+	 * {@link Algorithm#MAX_GENERATION_WO_IMPROVEMENT_STANDARD} and
+	 * {@link Algorithm#MAX_GENERATION_WO_IMPROVEMENT_OPTIMIZED}.
 	 */
 	private static void executeUntilNoMoreImprove(){
 		long tIni, tFin;
@@ -196,8 +207,10 @@ public class Main {
 		printResults(tIni, tFin, generation, population);
 
 	}
+	
 	/**
-	 * TODO
+	 * Execute the algorithm a fixed number of generations. Check the constant
+	 * {@link Main#MAX_NUM_GENERATIONS}.
 	 */
 	private static void executeAGivenNumberOfGenerations(){
 		long tIni, tFin;
@@ -231,35 +244,39 @@ public class Main {
 	/**
 	 * Prints the results after the algorithm has finished.
 	 *
-	 * @param tIni the initial time when the algorithm started
-	 * @param tFin the final time when the algorithm finished
-	 * @param generation the number of generations
-	 * @param population the final population
+	 * @param tIni
+	 *            the initial time when the algorithm started
+	 * @param tFin
+	 *            the final time when the algorithm finished
+	 * @param generation
+	 *            the final number of generations
+	 * @param population
+	 *            the final population
 	 */
 	private static void printResults(long tIni, long tFin, int generation, Population population) {
-		
+
 		System.out.println(SEPARATOR);
 		System.out.println(SEPARATOR);
-		
+
 		Individual fittest = population.getFittest(1)[0];
 		System.out.println("\n\nFinal results:\n");
-		System.out.println("- Algorithm type: "+Algorithm.getAlgType());
-		System.out.println("- Gene mutation probability: "+Algorithm.GENE_MUTATION_PROB);
-		System.out.println("- Optimization probability: "+Algorithm.OPTIMIZATION_PROB);
-		System.out.println("- Tournament size: "+Algorithm.TOURNAMENT_SIZE);
-		System.out.println("- Elitism individuals: "+Algorithm.ELITISM_INDIVIDUALS);
+		System.out.println("- Algorithm type: " + Algorithm.getAlgType());
+		System.out.println("- Gene mutation probability: " + Algorithm.GENE_MUTATION_PROB);
+		System.out.println("- Optimization probability: " + Algorithm.OPTIMIZATION_PROB);
+		System.out.println("- Tournament size: " + Algorithm.TOURNAMENT_SIZE);
+		System.out.println("- Elitism individuals: " + Algorithm.ELITISM_INDIVIDUALS);
 		System.out.println(population);
-		System.out.println("- Generation: "+generation);
-		System.out.println("- Best solution: "+fittest);
-		System.out.println("- Difference from optimal solution: "+
-				((((double)fittest.getFitness()-Data.getOptimalSolution())/Data.getOptimalSolution())*100)+"%");
-			
-		System.out.println("- Recalculated best fitness: "+fittest.calcFitnessStandard());
+		System.out.println("- Generation: " + generation);
+		System.out.println("- Best solution: " + fittest);
+		System.out.println("- Difference from optimal solution: "
+				+ ((((double) fittest.getFitness() - Data.getOptimalSolution()) / Data.getOptimalSolution()) * 100)
+				+ "%");
+
+		System.out.println("- Recalculated best fitness (in case of error): " + fittest.calcFitnessStandard());
 		long execTime = tFin - tIni;
-		System.out.println("- Time: "+execTime+" ms");
-		System.out.println("- Mean time per generation: "+((double)execTime/generation)+" ms");
-		
-			
+		System.out.println("- Time: " + execTime + " ms");
+		System.out.println("- Mean time per generation: " + ((double) execTime / generation) + " ms");
+
 	}
 
 	/**

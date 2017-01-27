@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Population that represent a generation of the genetic algorithm,
  * it handle an array of Individuals and contains operations for all of them.
@@ -28,7 +27,7 @@ public class Population {
 	/** The individuals. */
 	private Individual[] individuals = null;
 
-	/** The population fitness. */
+	/** The population fitness that is the mean fitness of its individuals. */
 	private long populationFitness = 0;
 
 	/** The population size. */
@@ -98,9 +97,7 @@ public class Population {
 	}
 
 	/**
-	 * Save a single individual.
-	 *
-	 * 
+	 * Save a single individual. 
 	 *
 	 * @param indiv
 	 *            the individual

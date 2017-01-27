@@ -108,10 +108,10 @@ public class Individual implements Comparable<Individual>{
 	}
 	
 	/**
-	 * Greedy heuristic based in 2-opt to generate an better individual.
-	 * It is used by the baldwinian and the lamarckian variant
+	 * Greedy heuristic based in 2-opt to generate an better individual. It is
+	 * used by the baldwinian and the lamarckian variant of the algorithm.
 	 *
-	 * @return the individual to be optimizated
+	 * @return the optimized individual
 	 */
 	public Individual greedyHeuristic(){
 		Individual best;
@@ -128,7 +128,6 @@ public class Individual implements Comparable<Individual>{
 					T.setGene(T.getGene(j), i);
 					T.setGene(tempGene, j);
 					
-					//T.calcFitness();
 					T.calcNewFitness(S.getFitness(), S.getGenes(), i, j);
 					
 					if (T.getFitness() < S.getFitness()) {
