@@ -47,12 +47,12 @@ public class Algorithm {
 	 * The Constant GENE_MUTATION_PROB that handle the mutation probability of
 	 * every single gene. 
 	 */
-	public static final double GENE_MUTATION_PROB = 0.0032;
+	public static final double GENE_MUTATION_PROB = 0.003;
 	
 	/** 
 	 * The Constant OPTIMIZATION_PROB for the generation of optimized individuals
 	 * in the optimized variants of the algorithm. */
-	public static final double OPTIMIZATION_PROB = 0.6; 
+	public static final double OPTIMIZATION_PROB = 0.5; 
 	
 	/** The Constant ELITISM_INDIVIDUALS for the elitism model. */
 	public static final int ELITISM_INDIVIDUALS = 2;
